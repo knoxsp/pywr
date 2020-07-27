@@ -775,7 +775,7 @@ class AggregatedStorage( Drawable, _core.AggregatedStorage, metaclass=NodeMeta):
     class Schema(NodeSchema):
         # The main attributes are not validated (i.e. `Raw`)
         # They could be many different things.
-        storage_nodes = marshmallow.fields.List(marshmallow.fields.Str())
+        storage_nodes = marshmallow.fields.List(fields.NodeField())
 
     def __init__(self, model, name, storage_nodes, **kwargs):
         super(AggregatedStorage, self).__init__(model, name, **kwargs)
