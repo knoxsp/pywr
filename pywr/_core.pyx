@@ -672,20 +672,36 @@ cdef class AggregatedNode(AbstractNode):
 
     property factors:
         def __get__(self):
-            if self._factors is None:
-                return None
-            else:
-                return np.asarray(self._factors, np.float64)
+            return self._factors
 
         def __set__(self, values):
+            from pywr.parameters import ConstantParameter
+
+            # remove existing factors (if any)
+            if self._factors is not None:
+                for factor in self._factors:
+                    factor.parents.remove(self)
+
             if values is None:
-                self._factors = None
+                factors = None
             else:
-                values = np.array(values, np.float64)
-                if np.any(values < 1e-6):
-                    warnings.warn("Very small factors in AggregateNode result in ill-conditioned matrix")
-                self._factors = values
+                factors = []
+                for val in values:
+                    if isinstance(val, (int, float)):
+                        factors.append(ConstantParameter(self.model, val))
+                        if np.any(val < 1e-6):
+                            warnings.warn("Very small factors in AggregateNode result in ill-conditioned matrix")
+                    else:
+                        factors.append(val)
+
+            self._factors = factors
             self.model.dirty = True
+
+    property has_fixed_factors:
+        """Returns true if all factors are of type `ConstantParameter`"""
+        def __get__(self):
+            from pywr.parameters import ConstantParameter
+            return all([isinstance(p, ConstantParameter) for p in self.factors])
 
     property flow_weights:
         def __get__(self):
@@ -759,6 +775,61 @@ cdef class AggregatedNode(AbstractNode):
         if self._max_flow_param is None:
             return self._max_flow
         return self._max_flow_param.get_value(scenario_index)
+
+    cpdef double[:] get_factors(self, ScenarioIndex scenario_index):
+        """Get node factors for the current timestep and given scenario index.
+        """
+        cdef Parameter p
+        return np.array([p.get_value(scenario_index) for p in self.factors], np.float64)
+
+    cpdef double[:] get_factors_norm(self, ScenarioIndex scenario_index):
+        """Get node factors normalised by the factor of the first node
+        """
+        cdef double f0, f
+        cdef int i
+        cdef double[:] factors_norm, factors
+
+        factors = self.get_factors(scenario_index)
+        f0 = factors[0]
+        factors_norm = np.empty(len(factors), np.float64)
+
+        for i in range(len(factors)):
+            factors_norm[i] = f0/factors[i]
+        return factors_norm
+
+    @classmethod
+    def load_factors(cls, model, data):
+        """ Class method to load factors data from dict. """
+        from pywr.parameters import load_parameter
+
+        factors = None
+        if 'factors' in data:
+            factors = []
+            for pdata in data.pop('factors'):
+                factors.append(load_parameter(model, pdata))
+        return factors
+
+    @classmethod
+    def load(cls, data, model):
+        from pywr.parameters import load_parameter
+        name = data["name"]
+        nodes = [model._get_node_from_ref(model, node_name) for node_name in data["nodes"]]
+        agg = cls(model, name, nodes)
+        agg.factors = cls.load_factors(model, data)
+
+        try:
+            agg.flow_weights = data["flow_weights"]
+        except KeyError:
+            pass
+        try:
+            agg.min_flow = load_parameter(model, data["min_flow"])
+        except KeyError:
+            pass
+        try:
+            agg.max_flow = load_parameter(model, data["max_flow"])
+        except KeyError:
+            pass
+        return agg
 
 cdef class StorageInput(BaseInput):
     cpdef commit(self, int scenario_index, double volume):
