@@ -32,7 +32,8 @@ cdef class ControlCurvePiecewiseInterpolatedParameter(BaseControlCurveParameter)
 cdef class ControlCurveIndexParameter(IndexParameter):
     cdef public AbstractStorage storage_node
     cdef list _control_curves
-
+    cdef list minimum_days_in_level
+    cdef int[:, :] index_recorder
 
 cdef class ControlCurveParameter(BaseControlCurveParameter):
     cdef double[:] _values

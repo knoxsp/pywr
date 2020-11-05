@@ -396,11 +396,12 @@ cdef class ControlCurveIndexParameter(IndexParameter):
     storage_node : `Storage`
     control_curves : iterable of `Parameter` instances or floats
     """
-    def __init__(self, model, storage_node, control_curves, **kwargs):
-        super(ControlCurveIndexParameter, self).__init__(model, **kwargs)
+    def __init__(self, model, storage_node, control_curves, minimum_days_in_level=None, **kwargs):
+        super(ControlCurveIndexParameter, self).__init__(model, minimum_days_in_level, **kwargs)
         self.storage_node = storage_node
         self.control_curves = control_curves
-
+        self.minimum_days_in_level = minimum_days_in_level
+        
     property control_curves:
         def __get__(self):
             return self._control_curves
@@ -424,6 +425,29 @@ cdef class ControlCurveIndexParameter(IndexParameter):
                 _new_control_curves.append(control_curve)
             self._control_curves = list(_new_control_curves)
 
+    # I think I can avoid pasting the whole setup method form indexparameter and add just the line i need
+    cpdef setup(self):
+        super(IndexParameter, self).setup()
+        cdef int num_comb, n_ts
+        cdef np.ndarray index_recorder
+        
+        n_ts = len(self.model.timestepper)
+
+        if self.model.scenarios.combinations:
+            num_comb = len(self.model.scenarios.combinations)
+        else:
+            num_comb = 1
+        self.__indices = np.empty([num_comb], np.int32)
+
+        self.index_recorder = np.zeros((n_ts, num_comb), np.int32)
+    
+    cpdef reset(self):
+        cdef int num_comb, n_ts
+        cdef np.ndarray index_recorder
+        n_ts = len(self.model.timestepper)    
+        
+        self.index_recorder = np.zeros((n_ts, num_comb), np.int32)
+
     cpdef int index(self, Timestep timestep, ScenarioIndex scenario_index) except? -1:
         """Returns the index of the first control curve the storage is above
 
@@ -434,22 +458,52 @@ cdef class ControlCurveIndexParameter(IndexParameter):
         """
         cdef double current_percentage
         cdef double target_percentage
-        cdef int index, j
+        cdef int index, j, _index_at_prev_ts, _index_at_minimum_dur_ts, _time_index_at_min_duration
         cdef Parameter control_curve
+
         current_percentage = self.storage_node._current_pc[scenario_index.global_id]
         index = len(self.control_curves)
-        for j, control_curve in enumerate(self.control_curves):
-            target_percentage = control_curve.get_value(scenario_index)
-            if current_percentage >= target_percentage:
-                index = j
-                break
+        
+        if self.minimum_days_in_level is not None:
+
+            for j, control_curve in enumerate(self.control_curves):
+                target_percentage = control_curve.get_value(scenario_index)
+                if current_percentage >= target_percentage:
+                    index = j
+                    break
+            
+            _index_at_prev_ts = self.index_recorder[timestep.index-1,scenario_index.global_id]
+
+            # If failure level is less than previous time steps failure level, or no failure
+            if index < _index_at_prev_ts:
+                
+                #Find index at time step
+                _time_index_at_min_duration=timestep.index-round(self.minimum_days_in_level[index-1]/timestep.days)
+                #Check if failure level has been held for minimum duration
+                #print(_time_index_at_min_duration,)
+                if not min(self.index_recorder[_time_index_at_min_duration:timestep.index-1,scenario_index.global_id])==max(self.index_recorder[_time_index_at_min_duration:timestep.index-1,scenario_index.global_id]):
+                    index=_index_at_prev_ts
+
+            self.index_recorder[timestep.index,scenario_index.global_id] = index
+            #print(self.index_recorder[timestep.index,scenario_index.global_id], index)
+        else:
+            for j, control_curve in enumerate(self.control_curves):
+                target_percentage = control_curve.get_value(scenario_index)
+                if current_percentage >= target_percentage:
+                    index = j
+                    break
+                                
         return index
 
     @classmethod
     def load(cls, model, data):
+        minimum_days_in_level=None
         storage_node = model._get_node_from_ref(model, data.pop("storage_node"))
         control_curves = [load_parameter(model, d) for d in data.pop("control_curves")]
-        return cls(model, storage_node, control_curves, **data)
+        if 'minimum_days_in_level' in data:
+            minimum_days_in_level = [load_parameter(model, d) for d in data.pop("minimum_days_in_level")]
+        
+        return cls(model, storage_node, control_curves, minimum_days_in_level=minimum_days_in_level, **data)
 ControlCurveIndexParameter.register()
 
 
