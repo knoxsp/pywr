@@ -395,6 +395,7 @@ cdef class ControlCurveIndexParameter(IndexParameter):
     ----------
     storage_node : `Storage`
     control_curves : iterable of `Parameter` instances or floats
+    minimum_days_in_level : List of minimum days in each failure level, must be equal to number of control curves (Optional)
     """
     def __init__(self, model, storage_node, control_curves, minimum_days_in_level=None, **kwargs):
         super(ControlCurveIndexParameter, self).__init__(model, minimum_days_in_level, **kwargs)
@@ -479,13 +480,13 @@ cdef class ControlCurveIndexParameter(IndexParameter):
                 
                 #Find index at time step
                 _time_index_at_min_duration=timestep.index-round(self.minimum_days_in_level[index-1]/timestep.days)
-                #Check if failure level has been held for minimum duration
-                #print(_time_index_at_min_duration,)
+                
+                #Check if same failure level has been held for minimum duration
                 if not min(self.index_recorder[_time_index_at_min_duration:timestep.index-1,scenario_index.global_id])==max(self.index_recorder[_time_index_at_min_duration:timestep.index-1,scenario_index.global_id]):
                     index=_index_at_prev_ts
 
             self.index_recorder[timestep.index,scenario_index.global_id] = index
-            #print(self.index_recorder[timestep.index,scenario_index.global_id], index)
+        #If no minimum_days_in_level
         else:
             for j, control_curve in enumerate(self.control_curves):
                 target_percentage = control_curve.get_value(scenario_index)
