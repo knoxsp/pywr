@@ -439,7 +439,6 @@ cdef class ControlCurveIndexParameter(IndexParameter):
         else:
             num_comb = 1
         self.__indices = np.empty([num_comb], np.int32)
-        print('indices', self.__indices.shape)
         self.index_recorder = np.empty((n_ts, num_comb), np.int32)
 
     cpdef reset(self):
