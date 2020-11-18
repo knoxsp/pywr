@@ -446,6 +446,11 @@ cdef class ControlCurveIndexParameter(IndexParameter):
         cdef int num_comb, n_ts
         cdef np.ndarray index_recorder
         n_ts = len(self.model.timestepper)    
+
+        if self.model.scenarios.combinations:
+            num_comb = len(self.model.scenarios.combinations)
+        else:
+            num_comb = 1
         
         self.index_recorder = np.zeros((n_ts, num_comb), np.int32)
 
@@ -472,7 +477,7 @@ cdef class ControlCurveIndexParameter(IndexParameter):
                 if current_percentage >= target_percentage:
                     index = j
                     break
-            
+
             _index_at_prev_ts = self.index_recorder[timestep.index-1,scenario_index.global_id]
 
             # If failure level is less than previous time steps failure level, or no failure
