@@ -430,7 +430,7 @@ cdef class ControlCurveIndexParameter(IndexParameter):
     cpdef setup(self):
         super(IndexParameter, self).setup()
         cdef int num_comb, n_ts
-        cdef np.ndarray index_recorder
+
         
         n_ts = len(self.model.timestepper)
 
@@ -439,20 +439,20 @@ cdef class ControlCurveIndexParameter(IndexParameter):
         else:
             num_comb = 1
         self.__indices = np.empty([num_comb], np.int32)
+        print('indices', self.__indices.shape)
+        self.index_recorder = np.empty((n_ts, num_comb), np.int32)
 
-        self.index_recorder = np.zeros((n_ts, num_comb), np.int32)
-    
     cpdef reset(self):
         cdef int num_comb, n_ts
-        cdef np.ndarray index_recorder
-        n_ts = len(self.model.timestepper)    
+
+        n_ts = len(self.model.timestepper)
 
         if self.model.scenarios.combinations:
             num_comb = len(self.model.scenarios.combinations)
         else:
             num_comb = 1
         
-        self.index_recorder = np.zeros((n_ts, num_comb), np.int32)
+        self.index_recorder = np.empty((n_ts, num_comb), np.int32)
 
     cpdef int index(self, Timestep timestep, ScenarioIndex scenario_index) except? -1:
         """Returns the index of the first control curve the storage is above
@@ -470,34 +470,30 @@ cdef class ControlCurveIndexParameter(IndexParameter):
         current_percentage = self.storage_node._current_pc[scenario_index.global_id]
         index = len(self.control_curves)
         
-        if self.minimum_days_in_level is not None:
+        for j, control_curve in enumerate(self.control_curves):
+            target_percentage = control_curve.get_value(scenario_index)
+            if current_percentage >= target_percentage:
+                index = j
+                break
 
-            for j, control_curve in enumerate(self.control_curves):
-                target_percentage = control_curve.get_value(scenario_index)
-                if current_percentage >= target_percentage:
-                    index = j
-                    break
+        if self.minimum_days_in_level is not None: 
 
-            _index_at_prev_ts = self.index_recorder[timestep.index-1,scenario_index.global_id]
 
-            # If failure level is less than previous time steps failure level, or no failure
-            if index < _index_at_prev_ts:
-                
-                #Find index at time step
-                _time_index_at_min_duration=timestep.index-round(self.minimum_days_in_level[index-1]/timestep.days)
-                
-                #Check if same failure level has been held for minimum duration
-                if not min(self.index_recorder[_time_index_at_min_duration:timestep.index-1,scenario_index.global_id])==max(self.index_recorder[_time_index_at_min_duration:timestep.index-1,scenario_index.global_id]):
-                    index=_index_at_prev_ts
+            if timestep.index>0:           
+                _index_at_prev_ts = self.index_recorder[timestep.index-1,scenario_index.global_id]
 
+                _time_index_at_min_duration=max(timestep.index-round(self.minimum_days_in_level[index-1]/timestep.days),0)
+
+                #print(self.index_recorder.shape)
+                # If failure level is less than previous time steps failure level, or no failure
+                if index < _index_at_prev_ts:
+                    
+                    if not min(self.index_recorder[_time_index_at_min_duration:timestep.index-1,scenario_index.global_id])==max(self.index_recorder[_time_index_at_min_duration:timestep.index-1,scenario_index.global_id]):                
+                        index=_index_at_prev_ts
+
+            
             self.index_recorder[timestep.index,scenario_index.global_id] = index
-        #If no minimum_days_in_level
-        else:
-            for j, control_curve in enumerate(self.control_curves):
-                target_percentage = control_curve.get_value(scenario_index)
-                if current_percentage >= target_percentage:
-                    index = j
-                    break
+
                                 
         return index
 
