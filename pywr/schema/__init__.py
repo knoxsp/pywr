@@ -122,6 +122,10 @@ class DataFrameSchema(ParameterSchema):
     key = marshmallow.fields.Raw()
     checksum = marshmallow.fields.Dict()
 
+    #enable support for reading from excel files
+    index_col = marshmallow.fields.Raw()
+    parse_dates = marshmallow.fields.Bool()
+
     @marshmallow.validates_schema()
     def validate_input_type(self, data, **kwargs):
         count = 0
