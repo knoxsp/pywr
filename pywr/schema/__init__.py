@@ -45,9 +45,19 @@ class NodeSchema(PywrSchema):
         model = self.context['model']
         klass = self.context['klass']
 
+        param_data = {}
+        non_param_data = {}
+
+        # Separate the data values in to parameter and non-parameter
+        for name, value in data.items():
+            if isinstance(self.fields[name], ParameterReferenceField):
+                param_data[name] = data[name]
+            else:
+                non_param_data[name] = data[name]
+
         if klass is not None:
-            # Create a new instance with the parameter and non-parameter data
-            return klass(model, **data)
+            # Create a new instance with the non-parameter data
+            return klass(model, **non_param_data)
 
     def load_parameters(self, data, obj):
         """ Load parameter data and set it on `obj`."""
