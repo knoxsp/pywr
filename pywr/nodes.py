@@ -815,7 +815,7 @@ class AggregatedNode(Drawable, _core.AggregatedNode, metaclass=NodeMeta):
         # They could be many different things.
         max_flow = fields.ParameterReferenceField(required=False)
         min_flow = fields.ParameterReferenceField(required=False)
-        factors = marshmallow.fields.List(marshmallow.fields.Number(), required=False)
+        factors = marshmallow.fields.List(fields.ParameterReferenceField(), required=False)
         flow_weights = marshmallow.fields.List(marshmallow.fields.Number(), required=False)
         nodes = marshmallow.fields.List(fields.NodeField())
 
