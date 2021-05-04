@@ -675,7 +675,7 @@ cdef class AggregatedNode(AbstractNode):
             return self._factors
 
         def __set__(self, values):
-            from pywr.parameters import ConstantParameter
+            from pywr.parameters import ConstantParameter, load_parameter
 
             # remove existing factors (if any)
             if self._factors is not None:
@@ -692,7 +692,10 @@ cdef class AggregatedNode(AbstractNode):
                         if np.any(val < 1e-6):
                             warnings.warn("Very small factors in AggregateNode result in ill-conditioned matrix")
                     else:
-                        factors.append(val)
+                        try:
+                            factors.append(load_parameter(self.model, val))
+                        except:
+                            factors.append(val)
 
             self._factors = factors
             self.model.dirty = True
