@@ -28,6 +28,7 @@
       ~Storage.get_all_min_volume
       ~Storage.get_area
       ~Storage.get_cost
+      ~Storage.get_current_pc
       ~Storage.get_initial_pc
       ~Storage.get_initial_volume
       ~Storage.get_level
@@ -56,6 +57,7 @@
       ~Storage.domain
       ~Storage.flow
       ~Storage.fully_qualified_name
+      ~Storage.has_fixed_cost
       ~Storage.initial_volume
       ~Storage.initial_volume_pc
       ~Storage.level

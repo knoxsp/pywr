@@ -26,6 +26,7 @@
       ~AnnualVirtualStorage.get_all_min_volume
       ~AnnualVirtualStorage.get_area
       ~AnnualVirtualStorage.get_cost
+      ~AnnualVirtualStorage.get_current_pc
       ~AnnualVirtualStorage.get_initial_pc
       ~AnnualVirtualStorage.get_initial_volume
       ~AnnualVirtualStorage.get_level
@@ -55,6 +56,7 @@
       ~AnnualVirtualStorage.factors
       ~AnnualVirtualStorage.flow
       ~AnnualVirtualStorage.fully_qualified_name
+      ~AnnualVirtualStorage.has_fixed_cost
       ~AnnualVirtualStorage.initial_volume
       ~AnnualVirtualStorage.initial_volume_pc
       ~AnnualVirtualStorage.level

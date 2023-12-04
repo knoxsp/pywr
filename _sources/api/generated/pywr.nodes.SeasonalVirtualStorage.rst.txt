@@ -26,6 +26,7 @@
       ~SeasonalVirtualStorage.get_all_min_volume
       ~SeasonalVirtualStorage.get_area
       ~SeasonalVirtualStorage.get_cost
+      ~SeasonalVirtualStorage.get_current_pc
       ~SeasonalVirtualStorage.get_initial_pc
       ~SeasonalVirtualStorage.get_initial_volume
       ~SeasonalVirtualStorage.get_level
@@ -55,6 +56,7 @@
       ~SeasonalVirtualStorage.factors
       ~SeasonalVirtualStorage.flow
       ~SeasonalVirtualStorage.fully_qualified_name
+      ~SeasonalVirtualStorage.has_fixed_cost
       ~SeasonalVirtualStorage.initial_volume
       ~SeasonalVirtualStorage.initial_volume_pc
       ~SeasonalVirtualStorage.level

@@ -26,6 +26,7 @@
       ~RollingVirtualStorage.get_all_min_volume
       ~RollingVirtualStorage.get_area
       ~RollingVirtualStorage.get_cost
+      ~RollingVirtualStorage.get_current_pc
       ~RollingVirtualStorage.get_initial_pc
       ~RollingVirtualStorage.get_initial_volume
       ~RollingVirtualStorage.get_level
@@ -55,6 +56,7 @@
       ~RollingVirtualStorage.factors
       ~RollingVirtualStorage.flow
       ~RollingVirtualStorage.fully_qualified_name
+      ~RollingVirtualStorage.has_fixed_cost
       ~RollingVirtualStorage.initial_volume
       ~RollingVirtualStorage.initial_volume_pc
       ~RollingVirtualStorage.level
