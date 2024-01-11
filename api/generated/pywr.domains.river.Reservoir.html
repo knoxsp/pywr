@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywr.domains.river.Reservoir &mdash; Pywr 1.6.1.dev184+gbbdf0f7 documentation</title>
+  <title>pywr.domains.river.Reservoir &mdash; Pywr 1.6.1.dev190+gde11e2a documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -16,7 +16,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=faa1769b"></script>
+        <script src="../../_static/documentation_options.js?v=ff53dec3"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -38,7 +38,7 @@
             Pywr
           </a>
               <div class="version">
-                1.6.1.dev184+gbbdf0f7
+                1.6.1.dev190+gde11e2a
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -134,6 +134,19 @@
 simple control curve. The Reservoir has above_curve_cost when it is above its curve
 and the user defined cost when it is below. Typically the costs are negative
 to represent a benefit of filling the reservoir when it is below its curve.</p>
+<p>A reservoir can also be used to simplify evaporation and rainfall by creating
+these nodes internally when the following properties are set:
+TODO: explain these and how they relate to each other. Please be as explicit as possible
+TODO: what format should each of these take? Perhaps provide a simple example
+- bathymetry</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>level</p></li>
+<li><p>area</p></li>
+<li><p>evaporation</p></li>
+<li><p>rainfall</p></li>
+</ul>
+</div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="pywr.domains.river.Reservoir.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pywr.domains.river.Reservoir.__init__" title="Link to this definition"></a></dt>
