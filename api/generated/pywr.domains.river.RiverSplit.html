@@ -6,17 +6,17 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pywr.domains.river.RiverSplit &mdash; Pywr 1.6.1.dev260+gd8767b7d6.d20260106 documentation</title>
+  <title>pywr.domains.river.RiverSplit &mdash; Pywr 1.6.1.dev272+g985185a33.d20260422 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=cf1ef453"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=fe9401dd"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -123,7 +123,7 @@
 <h1>pywr.domains.river.RiverSplit<a class="headerlink" href="#pywr-domains-river-riversplit" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="pywr.domains.river.RiverSplit">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pywr.domains.river.</span></span><span class="sig-name descname"><span class="pre">RiverSplit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pywr.domains.river.RiverSplit" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pywr.domains.river.</span></span><span class="sig-name descname"><span class="pre">RiverSplit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pywr.domains.river.RiverSplit" title="Link to this definition"></a></dt>
 <dd><p>A split in the river network</p>
 <p>RiverSplit is a specialised version of <cite>pywr.nodes.MultiSplitLink</cite> with a more convenient init method.
 It is intended for a simple case of where fixed ratio of flow is required to be distributed
@@ -310,7 +310,10 @@ than the length of factors (as per <cite>pywr.nodes.MultiSplitLink</cite> docume
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">recorders</span></code></p></td>
 <td><p>Returns a list of <cite>pywr.recorders.Recorder</cite> objects attached to this node.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">virtual</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tags</span></code></p></td>
+<td><p>tags: dict</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">virtual</span></code></p></td>
 <td><p>virtual: 'bool'</p></td>
 </tr>
 </tbody>
